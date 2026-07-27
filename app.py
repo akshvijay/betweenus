@@ -18,16 +18,15 @@ app = Flask(__name__, static_folder=None)
 # =========================================================
 
 def get_db():
-    database_url = os.environ.get("DATABASE_URL")
-
-    if not database_url:
-        raise RuntimeError("DATABASE_URL is not configured")
-
     return psycopg2.connect(
-        database_url,
+        host="db.slwsqyehmsccgcwdvkyc.supabase.co",
+        port=5432,
+        database="postgres",
+        user="postgres",
+        password=os.environ.get("DB_PASSWORD"),
+        sslmode="require",
         cursor_factory=RealDictCursor
     )
-
 
 def clean(value, limit=500):
     return str(value or "").strip()[:limit]
