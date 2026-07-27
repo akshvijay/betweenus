@@ -1,5 +1,14 @@
 {
-  "buildCommand": "echo 'No build step needed'",
-  "devCommand": "python server.py",
-  "regions": ["iad1"]
+  "version": 2,
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.12"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    }
+  ]
 }
