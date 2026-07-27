@@ -1,9 +1,19 @@
 const $ = (s, p = document) => p.querySelector(s), $$ = (s, p = document) => [...p.querySelectorAll(s)];
-let session, room, ticket, matchPoll, chatPoll, activeIncomingInvite, activeOutgoingInvite, invitePoll;
-const api = async (url, options = {}) => { const r = await fetch(url, {...options, headers:{'Content-Type':'application/json', ...(options.headers||{})}}); const data = await r.json(); if(!r.ok) throw Error(data.error||'Something went wrong'); return data };
+let session, room, ticket, matchPoll, chatPoll, activeIncomingInvite, activeOutgoingInvite, invitePoll, jwtToken, userId;
+const api = async (url, options = {}) => { const r = await fetch(url, {...options, headers:{'Content-Type':'application/json', ...(jwtToken?{'Authorization':`Bearer ${jwtToken}`}:{}), ...(options.headers||{})}}); const data = await r.json(); if(!r.ok) throw Error(data.error||'Something went wrong'); return data };
 const esc = v => String(v||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ago = t => {const n=Math.max(0,Math.floor(Date.now()/1000-t)); return n<60?'now':n<3600?`${Math.floor(n/60)} min ago`:`${Math.floor(n/3600)} hr ago`};
-async function getSession(){session=localStorage.getItem('betweenus-session');if(!session){session=(await api('/api/session',{method:'POST',body:'{}'})).session;localStorage.setItem('betweenus-session',session)}}
+async function getSession(){session=localStorage.getItem('betweenus-session');jwtToken=localStorage.getItem('betweenus-jwt');userId=localStorage.getItem('betweenus-user-id');if(!session){session=(await api('/api/session',{method:'POST',body:'{}'})).session;localStorage.setItem('betweenus-session',session)}updateAuthButton()}
+function updateAuthButton(){const btn=$('#auth-button');if(jwtToken){btn.textContent='View history ✦';btn.dataset.action='history'}else{btn.textContent='Sign in ↗';btn.dataset.action='login'}}
+async function signup(email,password){const r=await api('/api/auth/signup',{method:'POST',body:JSON.stringify({email,password})});jwtToken=r.token;userId=r.user_id;localStorage.setItem('betweenus-jwt',jwtToken);localStorage.setItem('betweenus-user-id',userId);updateAuthButton();close('auth-modal');alert('Account created! Your history is now saved.')}
+async function login(email,password){const r=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email,password})});jwtToken=r.token;userId=r.user_id;localStorage.setItem('betweenus-jwt',jwtToken);localStorage.setItem('betweenus-user-id',userId);updateAuthButton();close('auth-modal');alert('Signed in! Your history is loaded.')}
+async function loadHistory(){if(!jwtToken)return;try{const r=await api('/api/history');const list=$('#history-list');list.innerHTML=r.history.length?r.history.map((h,i)=>`<div class="history-item"><div><strong>Conversation ${i+1}</strong><small>${ago(h.created_at)}</small></div><small>${h.message_count} messages</small></div>`).join(''):'<div class="history-item"><p>No saved conversations yet. Sign in to your future chats to save them here.</p></div>'}catch(e){console.warn(e)}}
+function logout(){jwtToken=null;userId=null;localStorage.removeItem('betweenus-jwt');localStorage.removeItem('betweenus-user-id');updateAuthButton();close('history-modal');alert('Signed out.')}
+$('#auth-button').addEventListener('click',()=>{if(jwtToken){open('history-modal');loadHistory()}else{open('auth-modal')}});
+let isLoginMode=false;
+$('#toggle-login').addEventListener('click',e=>{e.preventDefault();isLoginMode=!isLoginMode;$('#auth-form').style.display=isLoginMode?'block':'block';$('#auth-submit').textContent=isLoginMode?'Sign in':'Sign up';$('[data-close="auth-modal"]').click();setTimeout(()=>open('auth-modal'),100)});
+$('#auth-form').addEventListener('submit',async e=>{e.preventDefault();const email=$('#auth-email').value,pwd=$('#auth-password').value;try{isLoginMode?await login(email,pwd):await signup(email,pwd);$('#auth-email').value='';$('#auth-password').value=''}catch(err){alert(err.message)}});
+$('#logout-btn').addEventListener('click',logout);
 function open(id){const m=$('#'+id);m.classList.add('open');m.setAttribute('aria-hidden','false')}
 function close(id){const m=$('#'+id);m.classList.remove('open');m.setAttribute('aria-hidden','true');if(id==='match-modal'){clearInterval(matchPoll);clearInterval(invitePoll)}if(id==='chat-modal')clearInterval(chatPoll)}
 document.addEventListener('mousemove',e=>$('.cursor-glow').style.cssText=`left:${e.clientX}px;top:${e.clientY}px`);

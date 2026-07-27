@@ -1,0 +1,5 @@
+{
+  "buildCommand": "echo 'No build step needed'",
+  "devCommand": "python server.py",
+  "regions": ["iad1"]
+}
