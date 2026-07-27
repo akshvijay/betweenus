@@ -130,16 +130,24 @@ def get_session_token(req, body):
         token = body.get('session')
     
     if token:
-        conn = get_db()
-        valid = conn.execute("SELECT 1 FROM sessions WHERE token=?", (token,)).fetchone()
-        conn.close()
-        return token if valid else None
+        try:
+            conn = get_db()
+            valid = conn.execute("SELECT 1 FROM sessions WHERE token=?", (token,)).fetchone()
+            conn.close()
+            return token if valid else None
+        except Exception as e:
+            return None
     return None
 
 def json_response(data, status=200):
     return {
         "statusCode": status,
-        "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        },
         "body": json.dumps(data)
     }
 
@@ -228,8 +236,12 @@ def posts_get():
 def session_create():
     token = str(uuid.uuid4())
     conn = get_db()
-    conn.execute("INSERT INTO sessions VALUES(?,?)", (token, int(time.time())))
-    conn.commit()
+    try:
+        conn.execute("INSERT INTO sessions VALUES(?,?,?)", (token, None, int(time.time())))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return json_response({"error": f"Failed to create session: {str(e)}"}, 500)
     conn.close()
     return json_response({"session": token})
 
@@ -246,8 +258,12 @@ def posts_create(token, data):
         "author_session": token
     }
     conn = get_db()
-    conn.execute("INSERT INTO posts (id,body,need,category,created_at,author_session) VALUES(:id,:body,:need,:category,:created_at,:author_session)", row)
-    conn.commit()
+    try:
+        conn.execute("INSERT INTO posts (id,body,need,category,created_at,author_session) VALUES(:id,:body,:need,:category,:created_at,:author_session)", row)
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return json_response({"error": f"Failed to create post: {str(e)}"}, 500)
     conn.close()
     row["relates"] = 0
     return json_response({"post": row}, 201)
@@ -259,7 +275,7 @@ def relate(token, pid):
         conn.execute("DELETE FROM relates WHERE post_id=? AND session=?", (pid, token))
         active = False
     else:
-        conn.execute("INSERT OR IGNORE INTO relates VALUES(?,?)", (pid, token))
+        conn.execute("INSERT OR IGNORE INTO relates VALUES(?,?,?)", (pid, token, None))
         active = True
         post = conn.execute("SELECT author_session FROM posts WHERE id=?", (pid,)).fetchone()
         if post and post['author_session'] and post['author_session'] != token:
@@ -328,7 +344,7 @@ def accept_invitation(token, invite_id):
         conn.close()
         return json_response({"error": "Invitation is no longer active"}, 409)
     room = str(uuid.uuid4())
-    conn.execute("INSERT INTO rooms VALUES(?,?,?,?)", (room, invite['sender'], invite['recipient'], int(time.time())))
+    conn.execute("INSERT INTO rooms VALUES(?,?,?,?,?,?)", (room, invite['sender'], None, invite['recipient'], None, int(time.time())))
     conn.execute("UPDATE invitations SET status='accepted',room=? WHERE id=?", (room, invite_id))
     conn.commit()
     conn.close()
@@ -348,15 +364,15 @@ def match(token):
     waiting = conn.execute("SELECT * FROM queue WHERE status='waiting' AND session<>? ORDER BY created_at LIMIT 1", (token,)).fetchone()
     if waiting:
         room = str(uuid.uuid4())
-        conn.execute("INSERT INTO rooms VALUES(?,?,?,?)", (room, waiting['session'], token, now))
+        conn.execute("INSERT INTO rooms VALUES(?,?,?,?,?,?)", (room, waiting['session'], None, token, None, now))
         conn.execute("UPDATE queue SET status='matched', room=? WHERE ticket=?", (room, waiting['ticket']))
         ticket = str(uuid.uuid4())
-        conn.execute("INSERT INTO queue VALUES(?,?,?,?,?)", (ticket, token, now, 'matched', room))
+        conn.execute("INSERT INTO queue VALUES(?,?,?,?,?,?)", (ticket, token, None, now, 'matched', room))
         conn.commit()
         conn.close()
         return json_response({"status": "matched", "room": room, "ticket": ticket})
     ticket = str(uuid.uuid4())
-    conn.execute("INSERT INTO queue VALUES(?,?,?,?,?)", (ticket, token, now, 'waiting', None))
+    conn.execute("INSERT INTO queue VALUES(?,?,?,?,?,?)", (ticket, token, None, now, 'waiting', None))
     conn.commit()
     conn.close()
     return json_response({"status": "waiting", "ticket": ticket})
@@ -391,9 +407,9 @@ def chat_post(token, room, data):
     body = clean(data.get("body", ""), 700)
     if not body:
         return json_response({"error": "Message is empty"}, 400)
-    msg = {"id": str(uuid.uuid4()), "room": room, "sender": token, "body": body, "created_at": int(time.time())}
+    msg = {"id": str(uuid.uuid4()), "room": room, "sender": token, "sender_user_id": None, "body": body, "created_at": int(time.time())}
     conn = get_db()
-    conn.execute("INSERT INTO messages VALUES(:id,:room,:sender,:body,:created_at)", msg)
+    conn.execute("INSERT INTO messages VALUES(:id,:room,:sender,:sender_user_id,:body,:created_at)", msg)
     conn.commit()
     conn.close()
     return json_response({"message": msg}, 201)
@@ -423,6 +439,10 @@ def handler(request):
     
     method = request.method
     path = request.path
+    
+    # Handle CORS preflight
+    if method == "OPTIONS":
+        return json_response({}, 200)
     
     # Parse request body
     try:
