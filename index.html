@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="BetweenUs — a quieter place to be understood." />
+    <title>BetweenUs — a quieter place to be understood</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="notifications.css" />
+  </head>
+  <body>
+    <div class="cursor-glow"></div>
+    <nav class="nav"><a class="brand" href="#top" aria-label="BetweenUs home"><i></i>between<span>us</span></a><div class="nav-links"><a href="#community">Community</a><a href="#how">How it works</a><button class="activity-button" id="activity-button">Activity <span id="activity-count">0</span></button><button class="quiet-link" data-scroll="#share">Share a thought <b>↗</b></button></div></nav>
+
+    <main id="top">
+      <section class="hero">
+        <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+        <div class="word word-a">overwhelmed</div><div class="word word-b">lonely</div><div class="word word-c">confused</div><div class="word word-d">stuck</div><div class="word word-e">not enough</div><div class="word word-f">lost</div>
+        <div class="hero-copy reveal">
+          <p class="eyebrow"><span></span>A quieter place to be understood</p>
+          <h1>Some things feel<br><em>lighter</em> when someone gets it.</h1>
+          <p class="hero-sub">Share what's on your mind. Find someone who relates. Talk anonymously.</p>
+          <div class="hero-actions"><button class="button primary" data-scroll="#share">I need to talk <b>↘</b></button><button class="button ghost" data-scroll="#community">See what others are feeling <b>↓</b></button></div>
+        </div>
+        <div class="scroll-cue"><span></span>scroll to exhale</div>
+      </section>
+
+      <section class="journey" id="how">
+        <div class="journey-intro reveal"><p class="eyebrow">It can be this simple</p><h2>Carry less.<br>Feel <em>less alone.</em></h2></div>
+        <div class="journey-line"></div>
+        <div class="journey-steps">
+          <article class="step reveal"><span>01</span><div class="step-orb orb-lav"></div><h3>Say it</h3><p>Put the thing you can't quite say anywhere else into words.</p></article>
+          <article class="step reveal"><span>02</span><div class="step-orb orb-peach"></div><h3>Be heard</h3><p>Let someone say, “I know that feeling,” without trying to fix it.</p></article>
+          <article class="step reveal"><span>03</span><div class="step-orb orb-blue"></div><h3>Feel lighter</h3><p>Take a breath. Sometimes being understood is enough for now.</p></article>
+        </div>
+      </section>
+
+      <section class="share-section" id="share">
+        <div class="share-wrap">
+          <div class="share-heading reveal"><p class="eyebrow">Leave your name at the door</p><h2>What's feeling<br><em>heavy</em> today?</h2><p>You don't have to make it sound right. Just let it be true.</p></div>
+          <form class="thought-form reveal" id="thought-form">
+            <textarea id="thought" maxlength="500" placeholder="You don't have to explain it perfectly..."></textarea><div class="form-foot"><span id="count">0 / 500</span><span>Posted as <b>Anonymous</b> <i class="anon-dot"></i></span></div>
+            <fieldset><legend>What do you need right now?</legend><div class="need-grid"><button type="button" class="choice active">I just want to vent</button><button type="button" class="choice">I want someone to listen</button><button type="button" class="choice">I want to talk</button><button type="button" class="choice">I want someone who relates</button></div></fieldset>
+            <fieldset class="categories"><legend>Optional — what is this about?</legend><div><button type="button" class="tag selected">relationships</button><button type="button" class="tag">college</button><button type="button" class="tag">career</button><button type="button" class="tag">family</button><button type="button" class="tag">friendships</button><button type="button" class="tag">loneliness</button><button type="button" class="tag">life</button></div></fieldset>
+            <button class="button primary post-button" type="submit">Share anonymously <b>↗</b></button>
+          </form>
+        </div>
+      </section>
+
+      <section class="community" id="community">
+        <div class="section-head reveal"><div><p class="eyebrow">A small corner of the internet</p><h2>You're not the only one<br>feeling <em>this way.</em></h2></div><button class="round-button" data-scroll="#share" aria-label="Share a thought">↗</button></div>
+        <div class="feed" id="feed">
+          <article class="thought-card large reveal"><div class="card-top"><span class="feeling">feeling stuck</span><time>12 min ago</time></div><blockquote>“I feel like everyone around me is moving forward while I'm just stuck.”</blockquote><div class="card-bottom"><button class="relate"><span>♡</span> I relate <small>27 people relate</small></button><button class="talk">Talk to them <b>→</b></button></div></article>
+          <article class="thought-card lilac reveal"><div class="card-top"><span class="feeling">college</span><time>28 min ago</time></div><blockquote>“I miss who I was before I started worrying about everything.”</blockquote><div class="card-bottom"><button class="relate"><span>♡</span> I relate <small>14 people relate</small></button></div></article>
+          <article class="thought-card peach reveal"><div class="card-top"><span class="feeling">loneliness</span><time>1 hr ago</time></div><blockquote>“I have people around me, but I don't feel known by any of them.”</blockquote><div class="card-bottom"><button class="relate"><span>♡</span> I relate <small>41 people relate</small></button><button class="talk">Talk to them <b>→</b></button></div></article>
+          <article class="thought-card dark reveal"><div class="card-top"><span class="feeling">relationships</span><time>2 hr ago</time></div><blockquote>“I keep making myself smaller to make space for everyone else.”</blockquote><div class="card-bottom"><button class="relate"><span>♡</span> I relate <small>33 people relate</small></button></div></article>
+        </div>
+      </section>
+
+      <section class="match-section">
+        <div class="match-panel reveal" id="match-panel"><div class="match-visual"><div class="pulse p1"></div><div class="pulse p2"></div><div class="pulse p3"></div><div class="match-core">✦</div></div><div class="match-copy"><p class="eyebrow">A little bit of serendipity</p><h2>Someone out there<br>might <em>get it.</em></h2><p>When you’re ready, we’ll find a quiet space with someone who understands.</p><button class="button primary" id="match-button">Find someone who gets it <b>→</b></button></div></div>
+      </section>
+
+      <section class="safety"><div class="safety-copy reveal"><p class="eyebrow">Care, with boundaries</p><h2>This is peer support,<br>not <em>professional care.</em></h2><p>BetweenUs is a place to feel less alone — not a substitute for emergency services, therapy, or medical support.</p></div><div class="safety-points reveal"><div><span>01</span><h3>Be gentle</h3><p>Listen with care. Leave advice at the door unless it’s asked for.</p></div><div><span>02</span><h3>Stay safe</h3><p>Never share personal details. You can end, block, or report any chat.</p></div><div><span>03</span><h3>Get help</h3><p>If you may be in danger, please contact local emergency support now.</p></div></div></section>
+    </main>
+    <footer><a class="brand" href="#top"><i></i>between<span>us</span></a><p>Made for the things we don't always know how to say.</p><div><button>Community guidelines</button><button>Safety</button><button>Report a concern</button></div></footer>
+
+    <div class="notification-bar" id="notification-bar"><div class="notification-orb">✦</div><div><p class="eyebrow">A small connection</p><strong id="notification-message">Someone relates to something you shared.</strong></div><button class="notification-talk" id="notification-talk">Talk anonymously →</button><button class="notification-close" id="notification-close">×</button></div>
+    <div class="modal" id="activity-modal" aria-hidden="true"><div class="modal-card activity-modal"><button class="close" data-close="activity-modal">×</button><p class="eyebrow">Your anonymous activity</p><h2>Little signs that<br>you were <em>heard.</em></h2><div id="activity-list" class="activity-list"></div></div></div>
+    <div class="modal" id="post-modal" aria-hidden="true"><div class="modal-card success"><button class="close" data-close="post-modal">×</button><div class="success-orb">✦</div><p class="eyebrow">You said it</p><h2>Thank you for<br>sharing that.</h2><p>It’s out of your head and into a space where it can be held.</p><button class="button primary" data-close="post-modal" data-scroll="#community">See the community <b>↓</b></button></div></div>
+    <div class="modal" id="match-modal" aria-hidden="true"><div class="modal-card matcher" id="matcher"><button class="close" data-close="match-modal">×</button><div class="searching"><div class="radar"><i></i><i></i><i></i><b>·</b></div><p class="eyebrow">Hold on a moment</p><h2>Finding someone<br>who <em>gets it...</em></h2><p id="match-status">Looking for a shared feeling, not a perfect match.</p></div><div class="matched"><div class="success-orb">✦</div><p class="eyebrow">A connection, waiting</p><h2>Someone <em>gets it.</em></h2><p>They’ve been feeling stuck too. You can talk without names, profiles, or pressure.</p><button class="button primary" id="open-chat">Talk anonymously <b>→</b></button></div></div></div>
+    <div class="modal" id="chat-modal" aria-hidden="true"><section class="chat-card"><header><div><p class="eyebrow"><span class="online"></span>Anonymous conversation</p><h2>Someone</h2></div><div class="chat-actions"><button id="safety-menu">•••</button><button class="close" data-close="chat-modal">×</button></div><div class="safety-menu" id="safety-menu-panel"><button data-end>End conversation</button><button data-block>Block Someone</button><button class="danger" data-report>Report inappropriate behavior</button></div></header><div class="chat-notice">You’re both anonymous. Share only what feels safe.</div><div class="messages" id="messages"></div><form class="chat-compose" id="chat-form"><input id="chat-input" placeholder="Write a message..." autocomplete="off"/><button aria-label="Send message">↑</button></form></section></div>
+    <script src="script.js"></script>
+  </body>
+</html>

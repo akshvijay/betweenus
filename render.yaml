@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: betweenus
+    env: docker
+    plan: starter
+    healthCheckPath: /api/posts
+    disk:
+      name: betweenus-data
+      mountPath: /app
+      sizeGB: 1
