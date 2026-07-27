@@ -19,10 +19,10 @@ app = Flask(__name__, static_folder=None)
 
 def get_db():
     return psycopg2.connect(
-        host="db.slwsqyehmsccgcwdvkyc.supabase.co",
-        port=5432,
+        host="aws-0-ap-northeast-1.pooler.supabase.com",
+        port=6543,
         database="postgres",
-        user="postgres",
+        user="postgres.slwsqyehmsccgcwdvkyc",
         password=os.environ.get("DB_PASSWORD"),
         sslmode="require",
         cursor_factory=RealDictCursor
