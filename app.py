@@ -17,7 +17,6 @@ app = Flask(__name__, static_folder=None)
 # DATABASE
 # =========================================================
 
-def get_db():
     return psycopg2.connect(
         host="aws-0-ap-northeast-1.pooler.supabase.com",
         port=6543,
